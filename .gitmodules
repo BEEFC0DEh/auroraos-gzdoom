@@ -1,0 +1,7 @@
+[submodule "zmusic"]
+	path = zmusic
+	url = https://github.com/ZDoom/ZMusic.git
+[submodule "upstream"]
+	path = upstream
+	url = https://github.com/ZDoom/gzdoom.git
+	branch = g4.7.1

@@ -4,10 +4,12 @@ Release: 1
 Summary: Doom sourceport with advanced features
 License: GPLv3
 URL    : https://zdoom.org
-Source : %{name}-%{version}.tar.bz2
+Source0 : %{name}-%{version}.tar.bz2
+Source1 : %{name}.desktop
+Source2 : %{name}.png
 Patch1 : 0001-Turn-on-32-bit-builds-for-armhfp.patch
 Patch2 : 0002-Fix-file-paths.patch
-#Patch3 : 0003-gzdoom-revert-commit.patch
+Patch3 : 0003-Fixing-GLES-mode-to-work-on-real-GLES-hardware-and-O.patch
 
 BuildRequires: bzip2-devel
 BuildRequires: pkgconfig(libjpeg)
@@ -18,6 +20,7 @@ BuildRequires: pkgconfig(sndfile)
 BuildRequires: pkgconfig(vpx)
 BuildRequires: pkgconfig(zlib)
 BuildRequires: cmake
+BuildRequires: desktop-file-utils
 Requires:      bzip2
 Requires:      OpenAL
 Requires:      SDL2
@@ -57,6 +60,12 @@ cd upstream/build
 %make_build
 
 %install
+cd ../rpm
+desktop-file-install --dir %{buildroot}%{_datadir}/applications %{name}.desktop
+
+mkdir -m 0755 -pv %{buildroot}%{_datadir}/icons/hicolor/256x256/apps
+install -m 0644 %{name}.png %{buildroot}%{_datadir}/icons/hicolor/256x256/apps/%{name}.png
+
 cd ../zmusic/build
 mkdir -m 0755 -pv %{buildroot}%{_libdir}
 install -m 0755 source/libzmusic.so.1.1.10 %{buildroot}%{_libdir}/
@@ -65,14 +74,24 @@ ln -sfrv %{buildroot}%{_libdir}/libzmusic.so.1 %{buildroot}%{_libdir}/libzmusic.
 
 cd ../../upstream/build
 mkdir -m 0755 -pv %{buildroot}%{_datadir}/%{name}
-cp -arv *.pk3 soundfonts fm_banks %{buildroot}%{_datadir}/%{name}/
+cp -arv *.pk3 %{buildroot}%{_datadir}/%{name}/
+mkdir -m 0755 -pv %{buildroot}%{_datadir}/doom
+cp -arv soundfonts fm_banks %{buildroot}%{_datadir}/doom/
 mkdir -m 0755 -pv %{buildroot}%{_bindir}
 install -m 0755 %{name} %{buildroot}%{_bindir}/
 install -m 0755 libraries/discordrpc/src/libdiscord-rpc.so %{buildroot}%{_libdir}/
 
+%post
+/usr/bin/update-desktop-database -q
+
+%postun
+/usr/bin/update-desktop-database -q
 
 %files
 %{_datadir}/%{name}
+%{_datadir}/doom
+%{_datadir}/applications/%{name}.desktop
+%{_datadir}/icons/hicolor
 %{_bindir}/%{name}
 %{_libdir}/libzmusic.so*
 %{_libdir}/libdiscord-rpc.so

@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=GZDoom
+Comment=Doom sourceport with advanced features
+Icon=gzdoom
+Exec=gzdoom +set vid_preferbackend 2 +set gl_es 1 -file %F
+MimeType=application/x-doom-wad;
+Categories=Game;ActionGame;
+
+[X-Sailjail]
+Sandboxing=Disabled
+OrganizationName=org.zdoom
+ApplicationName=gzdoom
